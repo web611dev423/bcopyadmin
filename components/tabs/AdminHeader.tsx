@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Moon, Sun, User } from 'lucide-react';
 // import { useTheme } from 'next-themes';
-import { NotificationBell } from '../custom/NotificationBell';
+import { NotificationBell } from '../custom/notification-bell';
 
 interface AdminHeaderProps {
   changeTab: (lang: string) => void;
