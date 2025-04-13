@@ -1,0 +1,109 @@
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import api from '@/lib/axios';
+
+// Define your data types
+interface ContributionState {
+  items: any[];
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: ContributionState = {
+  items: [],
+  loading: false,
+  error: null,
+};
+
+// Create async thunk for fetching data
+export const fetchContributions = createAsyncThunk(
+  'contributions/fetchContributions',
+  async () => {
+    const response = await api.get('/contributions');
+    return response.data;
+  }
+);
+
+export const accpetContribution = createAsyncThunk(
+  'contributions/accpetContribution',
+  async (contribution: any) => {
+    const response = await api.post('/contributions/accept', contribution);
+    return response.data;
+  }
+);
+
+export const rejectContribution = createAsyncThunk(
+  'contributions/rejectContribution',
+  async (contribution: any) => {
+    const response = await api.post('/contributions/reject', contribution);
+    return response.data;
+  }
+);
+
+export const fetchStatus = createAsyncThunk(
+  'contributions/fetchStatus',
+  async (contribution: any) => {
+    const response = await api.post('/contributions/status', contribution);
+    return response.data;
+  }
+);
+
+
+const contributionSlice = createSlice({
+  name: 'contributions',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchContributions.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchContributions.fulfilled, (state, action) => {
+        state.loading = false;
+        state.items = action.payload.data;
+        state.error = null;
+      })
+      .addCase(fetchContributions.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(accpetContribution.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(accpetContribution.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(accpetContribution.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(rejectContribution.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(rejectContribution.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(rejectContribution.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(fetchStatus.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        const newStatus = action.payload.data;
+        const index = state.items.findIndex(item => item._id === newStatus._id);
+        if (index !== -1) {
+          state.items[index] = newStatus;
+        }
+        state.error = null;
+      }).addCase(fetchStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      });
+  },
+});
+
+export default contributionSlice.reducer;
