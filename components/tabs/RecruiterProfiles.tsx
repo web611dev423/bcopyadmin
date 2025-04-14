@@ -43,47 +43,6 @@ export function RecruiterProfiles() {
     dispatch(fetchRecruiters());
   }, [dispatch]);
 
-  // Mock data - replace with actual data fetching
-  // const recruiters = [
-  //   {
-  //     id: 1,
-  //     name: 'Sarah Johnson',
-  //     email: 'sarah.j@techcorp.com',
-  //     phone: '+1 (555) 123-4567',
-  //     linkedIn: 'linkedin.com/in/sarahjohnson',
-  //     company: {
-  //       name: 'Tech Corp',
-  //       website: 'techcorp.com',
-  //       logo: 'https://example.com/logo.png',
-  //       size: '500+ employees',
-  //       industry: 'Technology'
-  //     },
-  //     status: 'verified',
-  //     activeJobs: 12,
-  //     totalHires: 45,
-  //     joinDate: '2024-01-10',
-  //     lastActive: '2024-03-20'
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Michael Chen',
-  //     email: 'm.chen@innolabs.com',
-  //     phone: '+1 (555) 987-6543',
-  //     linkedIn: 'linkedin.com/in/michaelchen',
-  //     company: {
-  //       name: 'Innovation Labs',
-  //       website: 'innolabs.com',
-  //       logo: 'https://example.com/logo2.png',
-  //       size: '100-250 employees',
-  //       industry: 'Software'
-  //     },
-  //     status: 'pending',
-  //     activeJobs: 5,
-  //     totalHires: 18,
-  //     joinDate: '2024-02-15',
-  //     lastActive: '2024-03-19'
-  //   }
-  // ];
 
   const handleSort = (field: string) => {
     if (sortField === field) {

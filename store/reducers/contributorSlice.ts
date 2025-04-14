@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '@/lib/axios';
+import api from '@/lib/api';
 
 // Define your data types
 interface ContributorState {
@@ -18,7 +18,7 @@ const initialState: ContributorState = {
 export const fetchContributors = createAsyncThunk(
   'contributors/fetchContributors',
   async () => {
-    const response = await api.get('/contributors');
+    const response = await api.get('/api/contributors');
     return response.data;
   }
 );
@@ -26,7 +26,7 @@ export const fetchContributors = createAsyncThunk(
 export const newContributor = createAsyncThunk(
   'contributors/newContributor',
   async (contributor: any) => {
-    const response = await api.post('/contributors/new', contributor);
+    const response = await api.post('/api/contributors/new', contributor);
     return response.data;
   }
 );

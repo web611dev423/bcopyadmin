@@ -32,42 +32,6 @@ export function UserProfiles() {
     dispatch(fetchContributors());
   }, [dispatch]);
 
-  // Mock data - replace with actual data fetching
-  // const users = [
-  //   {
-  //     id: 1,
-  //     name: 'John Smith',
-  //     email: 'john.smith@example.com',
-  //     linkedIn: 'linkedin.com/in/johnsmith',
-  //     location: 'United States',
-  //     status: 'active',
-  //     verified: true,
-  //     contributions: {
-  //       codeSubmissions: 15,
-  //       approvedSubmissions: 12,
-  //       rating: 4.8
-  //     },
-  //     joinDate: '2024-01-15',
-  //     lastActive: '2024-03-20'
-  //   },
-  //   {
-  //     id: 2,
-  //     name: 'Emma Wilson',
-  //     email: 'emma.wilson@example.com',
-  //     linkedIn: 'linkedin.com/in/emmawilson',
-  //     location: 'United Kingdom',
-  //     status: 'pending',
-  //     verified: false,
-  //     contributions: {
-  //       codeSubmissions: 8,
-  //       approvedSubmissions: 6,
-  //       rating: 4.5
-  //     },
-  //     joinDate: '2024-02-01',
-  //     lastActive: '2024-03-19'
-  //   }
-  // ];
-
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');

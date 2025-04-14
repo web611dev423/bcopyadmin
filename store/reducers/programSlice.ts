@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '@/lib/axios';
+import api from '@/lib/api';
 
 // Define your data types
 interface ProgramState {
@@ -18,7 +18,7 @@ const initialState: ProgramState = {
 export const fetchPrograms = createAsyncThunk(
   'programs/fetchPrograms',
   async () => {
-    const response = await api.get('/programs');
+    const response = await api.get('/api/programs');
     return response.data;
   }
 );
@@ -26,7 +26,7 @@ export const fetchPrograms = createAsyncThunk(
 export const acceptProgram = createAsyncThunk(
   'programs/acceptProgram',
   async (program: any) => {
-    const response = await api.post('/programs/accept', { id: program });
+    const response = await api.post('/api/programs/accept', { id: program });
     return response.data;
   }
 );
@@ -34,7 +34,7 @@ export const acceptProgram = createAsyncThunk(
 export const rejectProgram = createAsyncThunk(
   'programs/rejectProgram',
   async (program: any) => {
-    const response = await api.post('/programs/reject', { id: program });
+    const response = await api.post('/api/programs/reject', { id: program });
     return response.data;
   }
 );
@@ -42,7 +42,7 @@ export const rejectProgram = createAsyncThunk(
 export const fetchStatus = createAsyncThunk(
   'programs/fetchStatus',
   async (program: any) => {
-    const response = await api.post('/programs/status', { id: program });
+    const response = await api.post('/api/programs/status', { id: program });
     return response.data;
   }
 );

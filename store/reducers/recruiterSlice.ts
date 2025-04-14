@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '@/lib/axios';
+import api from '@/lib/api';
 
 // Define your data types
 interface RecruiterState {
@@ -18,7 +18,7 @@ const initialState: RecruiterState = {
 export const fetchRecruiters = createAsyncThunk(
   'recruiters/fetchRecruiters',
   async () => {
-    const response = await api.get('/recruiters');
+    const response = await api.get('/api/recruiters');
     return response.data;
   }
 );
@@ -26,7 +26,7 @@ export const fetchRecruiters = createAsyncThunk(
 export const newRecruiter = createAsyncThunk(
   'recruiters/newRecruiter',
   async (recruiter: any) => {
-    const response = await api.post('/recruiters/new', recruiter);
+    const response = await api.post('/api/recruiters/new', recruiter);
     return response.data;
   }
 );

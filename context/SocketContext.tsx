@@ -16,7 +16,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:5000', {
+    const newSocket = io(process.env.NEXT_PUBLIC_BACKEND_API_URL, {
       withCredentials: true,
       transports: ['websocket'], // Force WebSocket transport
       reconnection: true, // Enable reconnection

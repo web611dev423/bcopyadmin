@@ -37,8 +37,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchPrograms, acceptProgram, rejectProgram, fetchStatus } from '@/store/reducers/programSlice';
 import CodeDialog from '../custom/code-dialog';
-import api from '@/lib/api';
-import axios from 'axios';
+import ftpapi from '@/lib/ftpapi';
 import { sign } from 'crypto';
 
 export function CodeList(props: any) {
@@ -97,11 +96,7 @@ export function CodeList(props: any) {
     formData.append('file', file);
     console.log(formData)
     try {
-      const response = await axios.post('http://localhost:5000/api/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
-      });
+      const response = await ftpapi.post('/api/upload', formData);
       console.log(response);
       // if (!response.ok) throw new Error('Upload failed');
 

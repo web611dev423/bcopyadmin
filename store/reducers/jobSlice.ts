@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '@/lib/axios';
+import api from '@/lib/api';
 
 // Define your data types
 interface JobState {
@@ -18,7 +18,7 @@ const initialState: JobState = {
 export const fetchJobs = createAsyncThunk(
   'jobs/fetchJobs',
   async () => {
-    const response = await api.get('/jobs');
+    const response = await api.get('/api/jobs');
     return response.data;
   }
 );
@@ -26,7 +26,7 @@ export const fetchJobs = createAsyncThunk(
 export const newjob = createAsyncThunk(
   'jobs/newjob',
   async (job: any) => {
-    const response = await api.post('/jobs/new', job);
+    const response = await api.post('/api/jobs/new', job);
     return response.data;
   }
 );
@@ -34,21 +34,21 @@ export const newjob = createAsyncThunk(
 export const fetchStatus = createAsyncThunk(
   'jobs/fetchStatus',
   async (job: any) => {
-    const response = await api.post('/jobs/status', job);
+    const response = await api.post('/api/jobs/status', job);
     return response.data;
   }
 );
 export const acceptJob = createAsyncThunk(
   'jobs/acceptJob',
   async (job: any) => {
-    const response = await api.post('/jobs/accept', job);
+    const response = await api.post('/api/jobs/accept', job);
     return response.data;
   }
 );
 export const rejectJob = createAsyncThunk(
   'jobs/rejectJob',
   async (job: any) => {
-    const response = await api.post('/jobs/reject', job);
+    const response = await api.post('/api/jobs/reject', job);
     return response.data;
   }
 );

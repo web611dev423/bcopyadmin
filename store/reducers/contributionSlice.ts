@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '@/lib/axios';
+import api from '@/lib/api';
 
 // Define your data types
 interface ContributionState {
@@ -18,7 +18,7 @@ const initialState: ContributionState = {
 export const fetchContributions = createAsyncThunk(
   'contributions/fetchContributions',
   async () => {
-    const response = await api.get('/contributions');
+    const response = await api.get('/api/contributions');
     return response.data;
   }
 );
@@ -26,7 +26,7 @@ export const fetchContributions = createAsyncThunk(
 export const accpetContribution = createAsyncThunk(
   'contributions/accpetContribution',
   async (contribution: any) => {
-    const response = await api.post('/contributions/accept', contribution);
+    const response = await api.post('/api/contributions/accept', contribution);
     return response.data;
   }
 );
@@ -34,7 +34,7 @@ export const accpetContribution = createAsyncThunk(
 export const rejectContribution = createAsyncThunk(
   'contributions/rejectContribution',
   async (contribution: any) => {
-    const response = await api.post('/contributions/reject', contribution);
+    const response = await api.post('/api/contributions/reject', contribution);
     return response.data;
   }
 );
@@ -42,7 +42,7 @@ export const rejectContribution = createAsyncThunk(
 export const fetchStatus = createAsyncThunk(
   'contributions/fetchStatus',
   async (contribution: any) => {
-    const response = await api.post('/contributions/status', contribution);
+    const response = await api.post('/api/contributions/status', contribution);
     return response.data;
   }
 );
