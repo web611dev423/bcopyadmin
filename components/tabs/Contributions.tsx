@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Check, X, ArrowUpDown, User, Clock, FileText } from 'lucide-react';
+import { Check, X, ArrowUpDown, User, Clock, FileText, Delete, Trash2 } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -20,7 +20,7 @@ import {
 import { useEffect, useState } from 'react';
 
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { fetchContributions, accpetContribution, rejectContribution, fetchStatus } from '@/store/reducers/contributionSlice';
+import { fetchContributions, accpetContribution, rejectContribution, deleteContribution, fetchStatus } from '@/store/reducers/contributionSlice';
 
 export function Contributions(props: any) {
   const [sortField, setSortField] = useState<string>('date');
@@ -64,7 +64,9 @@ export function Contributions(props: any) {
     await dispatch(rejectContribution({ id }));
     await dispatch(fetchStatus({ id }));
   };
-
+  const handleDelete = async (id: string) => {
+    await dispatch(deleteContribution({ id }));
+  }
   return (
     <div className="space-y-6">
       <Table>
@@ -146,7 +148,7 @@ export function Contributions(props: any) {
                   {item.status}
                 </Badge>
               </TableCell >
-              <TableCell className="text-center space-x-2">
+              <TableCell className="text-right space-x-2">
                 {item.status === 'pending' && (
                   <>
                     <Button variant="ghost" size="icon" className="text-green-600" onClick={() => handleAccept(item._id)}>
@@ -155,8 +157,12 @@ export function Contributions(props: any) {
                     <Button variant="ghost" size="icon" className="text-red-600" onClick={() => handleReject(item._id)}>
                       <X className="h-4 w-4" />
                     </Button>
+
                   </>
                 )}
+                <Button variant="ghost" size="icon" className="text-gray-600" onClick={() => handleDelete(item._id)}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </TableCell>
             </TableRow>
           ))}

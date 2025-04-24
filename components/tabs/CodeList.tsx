@@ -35,10 +35,14 @@ import {
 } from '@/components/ui/tooltip';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchPrograms, acceptProgram, rejectProgram, fetchStatus } from '@/store/reducers/programSlice';
+import { fetchPrograms, acceptProgram, rejectProgram, fetchStatus, } from '@/store/reducers/programSlice';
+import { fetchCategories } from '@/store/reducers/categorySlice';
 import CodeDialog from '../custom/code-dialog';
 import ftpapi from '@/lib/ftpapi';
+import axios from 'axios';
 import { sign } from 'crypto';
+import * as XLSX from "xlsx";
+
 
 export function CodeList(props: any) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,8 +53,15 @@ export function CodeList(props: any) {
   };
   const dispatch = useAppDispatch();
   const programs = useAppSelector((state) => state.programs.items);
+  const categories = useAppSelector((state) => state.categories.items);
+
+  const getCategoryName = async (categoryId: string) => {
+    const categoryName = await categories.filter((category) => { if (category._id == categoryId) return category; })[0].name;
+    return categoryName;
+  }
 
   useEffect(() => {
+    dispatch(fetchCategories());
     dispatch(fetchPrograms());
   }, [dispatch]);
   // Mock data - replace with actual data fetching
@@ -89,29 +100,49 @@ export function CodeList(props: any) {
       console.error('No file selected');
       return;
     }
-
     const file = event.target.files[0];
     const formData = new FormData();
     console.log(file);
     formData.append('file', file);
     console.log(formData)
     try {
-      const response = await ftpapi.post('/api/upload', formData);
+      const response = await ftpapi.post('/api/upload/code', formData);
       console.log(response);
-      // if (!response.ok) throw new Error('Upload failed');
-
-      // const result = await response.json();
-      // Refresh the programs list
       dispatch(fetchPrograms());
 
     } catch (error) {
       console.error('Error uploading file:', error);
-      // Add error handling here
     }
+  };
+  const handleExportToExcel = async () => {
+    // Prepare data for Excel
+    const data = await Promise.all(
+      programs.map(async (program) => {
+        const categoryName = await getCategoryName(program.category);
+        return {
+          name: program.name,
+          description: program.description,
+          javaCode: program.code.java,
+          pythonCode: program.code.python,
+          htmlCode: program.code.html,
+          category: categoryName || "Unknown", // Fallback to "Unknown" if category is not found
+        };
+      })
+    );
+
+    // Create a worksheet
+    const worksheet = XLSX.utils.json_to_sheet(data);
+
+    // Create a workbook and append the worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Programs");
+
+    // Generate Excel file and trigger download
+    XLSX.writeFile(workbook, "Programs.xlsx");
   };
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center">
         <div className="relative w-96">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -121,19 +152,28 @@ export function CodeList(props: any) {
             className="pl-8"
           />
         </div>
-        <Button>
-          <Input
-            type="file"
-            accept=".xlsx"
-            onChange={handleFileUpload}
-            style={{ display: 'none' }}
-            id="file-upload"
-          />
-          <label htmlFor="file-upload" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-            <FileUp className="mr-2 h-4 w-4" />
-            Import Excel
-          </label>
-        </Button>
+        <div className="flex justify-end space-x-4">
+          <Button className="justify-self-end">
+            <Input
+              type="file"
+              accept=".xlsx"
+              onChange={handleFileUpload}
+              style={{ display: 'none' }}
+              id="file-upload"
+            />
+            <label
+              htmlFor="file-upload"
+              style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+            >
+              <FileUp className="mr-2 h-4 w-4" />
+              Import Excel
+            </label>
+          </Button>
+          <Button onClick={handleExportToExcel} className="justify-self-end">
+            <FileText className="mr-2 h-4 w-4" />
+            Export to Excel
+          </Button>
+        </div>
       </div>
 
       <Table>

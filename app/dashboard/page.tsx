@@ -11,10 +11,12 @@ import { Contributions } from "@/components/tabs/Contributions";
 import { AdminHeader } from "@/components/tabs/AdminHeader";
 import { JobPostings } from "@/components/tabs/JobPostings";
 import CodeDialog from "@/components/custom/code-dialog";
+import SettingDialog from "@/components/custom/setting-dialog";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("code-list");
   const [open, setOpen] = useState(false);
+  const [settingOpen, setSettingOpen] = useState(false);
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [language, setLanguage] = useState('');
@@ -24,12 +26,15 @@ export default function Dashboard() {
     setName(name);
     setLanguage(language);
   }
+  const handleOpenSettingDialog = () => {
+    setSettingOpen(true);
+  }
   const handleActiveTab = (tab: string) => {
     setActiveTab(tab);
   }
   return (
     <div className="min-h-screen bg-background">
-      <AdminHeader changeTab={setActiveTab} />
+      <AdminHeader changeTab={setActiveTab} openSetting={handleOpenSettingDialog} />
       <main className="container mx-auto px-4 py-8">
         <Card className="p-6">
           <Tabs value={activeTab} onValueChange={handleActiveTab}>
@@ -59,6 +64,7 @@ export default function Dashboard() {
         </Card>
       </main>
       <CodeDialog open={open} onOpenChange={setOpen} title={name} code={code} language={language} />
+      <SettingDialog open={settingOpen} onOpenChange={setSettingOpen} />
     </div>
   );
 }

@@ -52,7 +52,14 @@ export const rejectJob = createAsyncThunk(
     return response.data;
   }
 );
-
+export const deleteJob = createAsyncThunk(
+  'jobs/deleteJob',
+  async (job: any) => {
+    console.log('deletedJob');
+    const response = await api.post('/api/jobs/delete', job);
+    return response.data;
+  }
+);
 const jobSlice = createSlice({
   name: 'jobs',
   initialState,
@@ -88,7 +95,6 @@ const jobSlice = createSlice({
       .addCase(fetchStatus.fulfilled, (state, action) => {
         state.loading = false;
         const newStatus = action.payload.data;
-        console.log("newStatus", newStatus);
         const index = state.items.findIndex(item => item._id === newStatus._id);
         if (index !== -1) {
           state.items[index] = newStatus;
@@ -118,6 +124,21 @@ const jobSlice = createSlice({
         state.error = null;
       })
       .addCase(rejectJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(deleteJob.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteJob.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.items.findIndex(item => item._id === action.payload.data._id);
+        if (index !== -1) {
+          state.items.splice(index, 1);
+        }
+        state.error = null;
+      })
+      .addCase(deleteJob.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Something went wrong';
       });

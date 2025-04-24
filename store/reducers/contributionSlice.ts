@@ -38,7 +38,13 @@ export const rejectContribution = createAsyncThunk(
     return response.data;
   }
 );
-
+export const deleteContribution = createAsyncThunk(
+  'contributions/deleteContribution',
+  async (contribution: any) => {
+    const response = await api.post('/api/contributions/delete', contribution);
+    return response.data;
+  }
+);
 export const fetchStatus = createAsyncThunk(
   'contributions/fetchStatus',
   async (contribution: any) => {
@@ -88,6 +94,21 @@ const contributionSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Something went wrong';
       })
+      .addCase(deleteContribution.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteContribution.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.items.findIndex(item => item._id === action.payload.data._id);
+        if (index !== -1) {
+          state.items.splice(index, 1);
+        }
+        state.error = null;
+      })
+      .addCase(deleteContribution.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
       .addCase(fetchStatus.pending, (state) => {
         state.loading = true;
       })
@@ -102,7 +123,8 @@ const contributionSlice = createSlice({
       }).addCase(fetchStatus.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Something went wrong';
-      });
+      })
+      ;
   },
 });
 

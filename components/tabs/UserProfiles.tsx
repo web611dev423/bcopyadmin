@@ -137,7 +137,7 @@ export function UserProfiles() {
                   <Tooltip>
                     <TooltipTrigger className="flex items-center space-x-1 text-center">
                       <Globe className="h-4 w-4" />
-                      <span>{user.isActive ? 'Active' : 'Inactive'}</span>
+                      <span>{user.contributions.length}</span>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Joined: {user.createdAt}</p>

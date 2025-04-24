@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Check, X, ArrowUpDown, Building2, User, Calendar } from 'lucide-react';
+import { Check, X, ArrowUpDown, Building2, User, Calendar, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
   Tooltip,
@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/tooltip';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchJobs, rejectJob, acceptJob, fetchStatus } from '@/store/reducers/jobSlice';
+import { fetchJobs, rejectJob, acceptJob, fetchStatus, deleteJob } from '@/store/reducers/jobSlice';
 
 
 export function JobPostings() {
@@ -40,6 +40,10 @@ export function JobPostings() {
     await dispatch(rejectJob({ id }));
     await dispatch(fetchStatus({ id }));
   };
+
+  const handleDelete = async (id: string) => {
+    await dispatch(deleteJob({ id }));
+  }
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -152,6 +156,9 @@ export function JobPostings() {
                 </Button>
                 <Button variant="ghost" size="icon" disabled={job.status !== 'pending'} className="text-red-600" onClick={() => handleReject(job._id)}>
                   <X className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" className="text-gray-600" onClick={() => handleDelete(job._id)}>
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </TableCell>
             </TableRow>

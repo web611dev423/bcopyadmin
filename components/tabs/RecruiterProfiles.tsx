@@ -77,6 +77,9 @@ export function RecruiterProfiles() {
               <SortButton field="company">Company</SortButton>
             </TableHead>
             <TableHead>
+              <SortButton field="country">Country</SortButton>
+            </TableHead>
+            <TableHead>
               <SortButton field="lastActive">Activity</SortButton>
             </TableHead>
             <TableHead>
@@ -142,14 +145,15 @@ export function RecruiterProfiles() {
                   </Tooltip>
                 </TooltipProvider>
               </TableCell>
-              {/* <TableCell>
-                <Badge variant={recruiter.status === 'verified' ? 'default' : 'secondary'}>
-                  {recruiter.status}
-                </Badge>
-              </TableCell> */}
               <TableCell>
                 <div className="space-y-1">
-                  <div className="text-sm">Active Jobs: {recruiter.positions}</div>
+                  <div className="text-sm">{recruiter.country}</div>
+                  {/* <div className="text-sm">Total Hires: {recruiter.totalHires}</div> */}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="space-y-1">
+                  <div className="text-sm">Total Jobs:{recruiter.positions.length}</div>
                   {/* <div className="text-sm">Total Hires: {recruiter.totalHires}</div> */}
                 </div>
               </TableCell>
