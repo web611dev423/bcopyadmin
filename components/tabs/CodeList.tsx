@@ -37,11 +37,8 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchPrograms, acceptProgram, rejectProgram, fetchStatus, } from '@/store/reducers/programSlice';
 import { fetchCategories } from '@/store/reducers/categorySlice';
-import CodeDialog from '../custom/code-dialog';
 import ftpapi from '@/lib/ftpapi';
-import axios from 'axios';
-import { sign } from 'crypto';
-import * as XLSX from "xlsx";
+
 
 
 export function CodeList(props: any) {
@@ -53,12 +50,6 @@ export function CodeList(props: any) {
   };
   const dispatch = useAppDispatch();
   const programs = useAppSelector((state) => state.programs.items);
-  const categories = useAppSelector((state) => state.categories.items);
-
-  const getCategoryName = async (categoryId: string) => {
-    const categoryName = await categories.filter((category) => { if (category._id == categoryId) return category; })[0].name;
-    return categoryName;
-  }
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -114,32 +105,7 @@ export function CodeList(props: any) {
       console.error('Error uploading file:', error);
     }
   };
-  const handleExportToExcel = async () => {
-    // Prepare data for Excel
-    const data = await Promise.all(
-      programs.map(async (program) => {
-        const categoryName = await getCategoryName(program.category);
-        return {
-          name: program.name,
-          description: program.description,
-          javaCode: program.code.java,
-          pythonCode: program.code.python,
-          htmlCode: program.code.html,
-          category: categoryName || "Unknown", // Fallback to "Unknown" if category is not found
-        };
-      })
-    );
 
-    // Create a worksheet
-    const worksheet = XLSX.utils.json_to_sheet(data);
-
-    // Create a workbook and append the worksheet
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Programs");
-
-    // Generate Excel file and trigger download
-    XLSX.writeFile(workbook, "Programs.xlsx");
-  };
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -169,7 +135,7 @@ export function CodeList(props: any) {
               Import Excel
             </label>
           </Button>
-          <Button onClick={handleExportToExcel} className="justify-self-end">
+          <Button onClick={props.handleOpenExportDialog} className="justify-self-end">
             <FileText className="mr-2 h-4 w-4" />
             Export to Excel
           </Button>
@@ -181,6 +147,9 @@ export function CodeList(props: any) {
           <TableRow>
             <TableHead className='text-center  border-gray-200'>
               <SortButton field="name">Name</SortButton>
+            </TableHead>
+            <TableHead className='text-center  border-gray-200'>
+              <SortButton field="name">Category</SortButton>
             </TableHead>
             <TableHead className='text-center  border-gray-200'>Status</TableHead>
             <TableHead className='text-left  border-gray-200'>
@@ -202,6 +171,7 @@ export function CodeList(props: any) {
           {programs.map((program) => (program.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
             <TableRow key={program._id}>
               <TableCell className='justify-items-center  border-gray-200'>{program.name}</TableCell>
+              <TableCell className='justify-items-center  border-gray-200'>{program.categoryFullName}</TableCell>
               <TableCell className='text-center border-gray-200'>
                 <Badge variant={program.isActive === true ? 'default' : 'secondary'}>
                   {program.isActive === true ? 'Active' : 'Inactive'}

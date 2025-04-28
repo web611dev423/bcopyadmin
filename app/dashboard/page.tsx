@@ -12,11 +12,13 @@ import { AdminHeader } from "@/components/tabs/AdminHeader";
 import { JobPostings } from "@/components/tabs/JobPostings";
 import CodeDialog from "@/components/custom/code-dialog";
 import SettingDialog from "@/components/custom/setting-dialog";
+import ExportDialog from "@/components/custom/export-dialog";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("code-list");
   const [open, setOpen] = useState(false);
   const [settingOpen, setSettingOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [language, setLanguage] = useState('');
@@ -29,9 +31,13 @@ export default function Dashboard() {
   const handleOpenSettingDialog = () => {
     setSettingOpen(true);
   }
+  const handleOpenExportDialog = () => {
+    setExportOpen(true);
+  }
   const handleActiveTab = (tab: string) => {
     setActiveTab(tab);
   }
+
   return (
     <div className="min-h-screen bg-background">
       <AdminHeader changeTab={setActiveTab} openSetting={handleOpenSettingDialog} />
@@ -46,7 +52,7 @@ export default function Dashboard() {
               <TabsTrigger value="recruiters">Recruiters</TabsTrigger>
             </TabsList>
             <TabsContent value="code-list">
-              <CodeList handleOpenDialog={handleOpenDialog} />
+              <CodeList handleOpenDialog={handleOpenDialog} handleOpenExportDialog={handleOpenExportDialog} />
             </TabsContent>
             <TabsContent value="contributions">
               <Contributions handleOpenDialog={handleOpenDialog} />
@@ -65,6 +71,7 @@ export default function Dashboard() {
       </main>
       <CodeDialog open={open} onOpenChange={setOpen} title={name} code={code} language={language} />
       <SettingDialog open={settingOpen} onOpenChange={setSettingOpen} />
+      <ExportDialog open={exportOpen} onOpenChange={setExportOpen} />
     </div>
   );
 }
