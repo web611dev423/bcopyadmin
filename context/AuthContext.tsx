@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '@/lib/services/authService';
-
+import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
   user: any | null;
@@ -16,6 +16,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+
   const [user, setUser] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -61,7 +63,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     localStorage.removeItem('userData');
     localStorage.removeItem('token');
-    window.location.href = '/login';
+    setIsAuthenticated(false);
+    router.push('/login');
   };
 
   return (

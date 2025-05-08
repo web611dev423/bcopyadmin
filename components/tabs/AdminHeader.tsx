@@ -7,9 +7,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Moon, Settings2, SettingsIcon, Sun, User } from 'lucide-react';
-// import { useTheme } from 'next-themes';
+import { LogOut, Moon, Settings2, SettingsIcon, Sun, User } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { NotificationBell } from '../custom/notification-bell';
+import { useAuth } from '@/context/AuthContext';
+
 
 interface AdminHeaderProps {
   changeTab: (lang: string) => void;
@@ -17,9 +19,14 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({ changeTab, openSetting }: AdminHeaderProps) {
-  // const { setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const handleClick = () => {
     openSetting();
+  }
+  const { logout } = useAuth();
+  const handleLogout = () => {
+    logout();
+    setTheme("system");
   }
   return (
     <header className="border-b">
@@ -28,7 +35,7 @@ export function AdminHeader({ changeTab, openSetting }: AdminHeaderProps) {
           <h1 className="text-2xl font-bold">Admin Dashboard</h1>
           <div className="flex items-center space-x-4">
             <NotificationBell changeTab={changeTab} />
-            {/* <DropdownMenu>
+            <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -38,22 +45,32 @@ export function AdminHeader({ changeTab, openSetting }: AdminHeaderProps) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setTheme('light')}>
-                  Light
+                  <Sun /> Light
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setTheme('dark')}>
-                  Dark
+                  <Moon />Dark
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setTheme('system')}>
-                  System
+                  <Settings2 />System
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu> */}
+            </DropdownMenu>
             <Button variant="ghost" size="icon" onClick={handleClick}>
               <SettingsIcon className="h-[1.2rem] w-[1.2rem]" />
             </Button>
-            {/* <Button variant="ghost" size="icon">
-              <User className="h-[1.2rem] w-[1.2rem]" />
-            </Button> */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <User className="h-[1.2rem] w-[1.2rem]" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

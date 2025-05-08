@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Check, X, ArrowUpDown, Building2, User, Calendar, Trash2 } from 'lucide-react';
+import { Check, X, ArrowUpDown, Building2, User, Calendar, Trash2, Pin, PinOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
   Tooltip,
@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/tooltip';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchJobs, rejectJob, acceptJob, fetchStatus, deleteJob } from '@/store/reducers/jobSlice';
+import { fetchJobs, rejectJob, acceptJob, fetchStatus, deleteJob, pinJob, unPinJob } from '@/store/reducers/jobSlice';
 
 
 export function JobPostings() {
@@ -40,7 +40,12 @@ export function JobPostings() {
     await dispatch(rejectJob({ id }));
     await dispatch(fetchStatus({ id }));
   };
-
+  const handlePin = async (id: string) => {
+    await dispatch(pinJob({ id }));
+  };
+  const handleUnPin = async (id: string) => {
+    await dispatch(unPinJob({ id }));
+  };
   const handleDelete = async (id: string) => {
     await dispatch(deleteJob({ id }));
   }
@@ -86,6 +91,7 @@ export function JobPostings() {
             <TableHead className='text-center  border-gray-200'>
               <SortButton field="status">Status</SortButton>
             </TableHead>
+            <TableHead className="text-right">PinRank</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -150,7 +156,14 @@ export function JobPostings() {
                   {job.status}
                 </Badge>
               </TableCell>
+              <TableCell className="text-right flex items-center space-x-2">
+                <p className="text-sm">{job.featureRank ? job.featureRank : ""}</p>
+                <Button variant="ghost" size="icon" className={job.isFeatured ? "text-blue" : "text-red"} onClick={() => { !job.isFeatured ? handlePin(job._id) : handleUnPin(job._id) }}>
+                  {job.isFeatured ? <PinOff className="h-4 w-4" fill='red' /> : <Pin className="h-4 w-4" fill='blue' />}
+                </Button>
+              </TableCell>
               <TableCell className="text-center space-x-2">
+
                 <Button variant="ghost" size="icon" disabled={job.status !== 'pending'} className="text-green-600" onClick={() => handleAccept(job._id)}>
                   <Check className="h-4 w-4" />
                 </Button>

@@ -19,7 +19,9 @@ import {
   Linkedin,
   Globe,
   CheckCircle2,
-  ImageIcon
+  ImageIcon,
+  PinOff,
+  Pin
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
@@ -30,7 +32,7 @@ import {
 } from '@/components/ui/tooltip';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchRecruiters } from '@/store/reducers/recruiterSlice';
+import { fetchRecruiters, pinRecruiter, unPinRecruiter } from '@/store/reducers/recruiterSlice';
 // import Image from 'next/image';
 
 export function RecruiterProfiles() {
@@ -43,6 +45,12 @@ export function RecruiterProfiles() {
     dispatch(fetchRecruiters());
   }, [dispatch]);
 
+  const handlePin = async (id: string) => {
+    await dispatch(pinRecruiter({ id }));
+  };
+  const handleUnPin = async (id: string) => {
+    await dispatch(unPinRecruiter({ id }));
+  };
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -84,6 +92,9 @@ export function RecruiterProfiles() {
             </TableHead>
             <TableHead>
               Created Date
+            </TableHead>
+            <TableHead>
+              PinRank
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -170,6 +181,12 @@ export function RecruiterProfiles() {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
+              </TableCell>
+              <TableCell className="text-right flex items-center space-x-2">
+                <p className="text-sm">{recruiter.featureRank ? recruiter.featureRank : ""}</p>
+                <Button variant="ghost" size="icon" className={recruiter.isFeatured ? "text-blue" : "text-red"} onClick={() => { !recruiter.isFeatured ? handlePin(recruiter._id) : handleUnPin(recruiter._id) }}>
+                  {recruiter.isFeatured ? <PinOff className="h-4 w-4" fill='red' /> : <Pin className="h-4 w-4" fill='blue' />}
+                </Button>
               </TableCell>
               <TableCell className="text-right">
                 {/* <Button variant="ghost" size="sm">

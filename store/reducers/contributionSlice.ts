@@ -53,6 +53,37 @@ export const fetchStatus = createAsyncThunk(
   }
 );
 
+export const pinContribution = createAsyncThunk(
+  'contributions/pinContribution',
+  async (contribution: any) => {
+    const response = await api.post('/api/contributions/pin', contribution);
+    return response.data;
+  }
+)
+export const unPinContribution = createAsyncThunk(
+  'contributions/unPinContribution',
+  async (contribution: any) => {
+    const response = await api.post('/api/contributions/unPin', contribution);
+    return response.data;
+  }
+)
+
+export const upRankContribution = createAsyncThunk(
+  'contributions/upRankContribution',
+  async (contribution: any) => {
+    const response = await api.post('/api/contributions/upRank', contribution);
+    return response.data;
+  }
+)
+
+export const downRankContribution = createAsyncThunk(
+  'contributions/downRankContribution',
+  async (contribution: any) => {
+    const response = await api.post('/api/contributions/downRank', contribution);
+    return response.data;
+  }
+)
+
 
 const contributionSlice = createSlice({
   name: 'contributions',
@@ -120,12 +151,86 @@ const contributionSlice = createSlice({
           state.items[index] = newStatus;
         }
         state.error = null;
-      }).addCase(fetchStatus.rejected, (state, action) => {
+      })
+      .addCase(fetchStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(pinContribution.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedContributions = action.payload.data; // Assuming the server returns the updated contributions
+        state.items = state.items.map(item =>
+          updatedContributions.find((updated: any) => updated._id === item._id) || item
+        );
+        state.items = sortContributions(state.items); // Re-sort the list
+        state.error = null;
+      })
+      .addCase(pinContribution.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(unPinContribution.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(unPinContribution.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedContributions = action.payload.data; // Assuming the server returns the updated contributions
+        state.items = state.items.map(item =>
+          updatedContributions.find((updated: any) => updated._id === item._id) || item
+        );
+        state.items = sortContributions(state.items); // Re-sort the list
+        state.error = null;
+      })
+      .addCase(unPinContribution.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(upRankContribution.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(upRankContribution.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedContributions = action.payload.data; // Assuming the server returns the updated contributions
+        state.items = state.items.map(item =>
+          updatedContributions.find((updated: any) => updated._id === item._id) || item
+        );
+        state.items = sortContributions(state.items); // Re-sort the list
+        state.error = null;
+      })
+      .addCase(upRankContribution.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(downRankContribution.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(downRankContribution.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedContributions = action.payload.data; // Assuming the server returns the updated contributions
+        state.items = state.items.map(item =>
+          updatedContributions.find((updated: any) => updated._id === item._id) || item
+        );
+        state.items = sortContributions(state.items); // Re-sort the list
+        state.error = null;
+      })
+      .addCase(downRankContribution.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Something went wrong';
       })
       ;
   },
 });
+
+const sortContributions = (contributions: any[]) => {
+  return contributions.sort((a, b) => {
+    if (a.isFeatured !== b.isFeatured) {
+      return b.isFeatured - a.isFeatured; // Featured contributions first
+    }
+    if (a.isFeatured) {
+      return a.featureRank - b.featureRank; // Sort featured contributions by featureRank
+    }
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); // Sort remaining contributions by createdAt
+  });
+};
 
 export default contributionSlice.reducer;

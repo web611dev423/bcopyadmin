@@ -54,7 +54,7 @@ export function NotificationBell({ changeTab }: NotificationBellProps) {
   }, [socket]);
 
   const handleNotificationClick = (notification: Notification) => {
-    console.log(changeTab);
+
     switch (notification.type) {
       case 'new-contribution':
         changeTab('contributions');

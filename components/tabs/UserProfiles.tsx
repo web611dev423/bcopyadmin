@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpDown, Globe, Mail, User, Linkedin, MapPin, CheckCircle2, XCircle } from 'lucide-react';
+import { ArrowUpDown, Globe, Mail, User, Linkedin, MapPin, CheckCircle2, XCircle, PinOff, Pin } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
   Tooltip,
@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/tooltip';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchContributors } from '@/store/reducers/contributorSlice';
+import { fetchContributors, pinContributor, unPinContributor } from '@/store/reducers/contributorSlice';
 
 export function UserProfiles() {
   const [sortField, setSortField] = useState<string>('name');
@@ -32,6 +32,13 @@ export function UserProfiles() {
     dispatch(fetchContributors());
   }, [dispatch]);
 
+
+  const handlePin = async (id: string) => {
+    await dispatch(pinContributor({ id }));
+  }
+  const handleUnPin = async (id: string) => {
+    await dispatch(unPinContributor({ id }));
+  }
   const handleSort = (field: string) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -71,7 +78,7 @@ export function UserProfiles() {
             <TableHead>
               <SortButton field="lastActive">Activity</SortButton>
             </TableHead>
-
+            <TableHead>PinRank</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -119,6 +126,11 @@ export function UserProfiles() {
                 </Badge>
               </TableCell>
               <TableCell>
+                <div className="space-y-1">
+                  <div className="text-sm">Total Contributions:{user.contributions.length}</div>
+                </div>
+              </TableCell>
+              <TableCell>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger className="flex items-center space-x-1 text-center">
@@ -132,19 +144,11 @@ export function UserProfiles() {
                   </Tooltip>
                 </TooltipProvider>
               </TableCell>
-              <TableCell>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger className="flex items-center space-x-1 text-center">
-                      <Globe className="h-4 w-4" />
-                      <span>{user.contributions.length}</span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Joined: {user.createdAt}</p>
-                      <p>Last active: {user.updatedAt}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+              <TableCell className="text-right flex items-center space-x-2">
+                <p className="text-sm">{user.featureRank ? user.featureRank : ""}</p>
+                <Button variant="ghost" size="icon" className={user.isFeatured ? "text-blue" : "text-red"} onClick={() => { !user.isFeatured ? handlePin(user._id) : handleUnPin(user._id) }}>
+                  {user.isFeatured ? <PinOff className="h-4 w-4" fill='red' /> : <Pin className="h-4 w-4" fill='blue' />}
+                </Button>
               </TableCell>
             </TableRow>
           ))}

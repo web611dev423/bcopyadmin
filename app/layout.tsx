@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/store/provider";
 import { AuthProvider } from "@/context/AuthContext";
 import { SocketProvider } from "@/context/SocketContext";
+import { ThemeProvider } from "next-themes";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,13 +30,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <Providers>
-            <SocketProvider>
-              {children}
-            </SocketProvider>
-          </Providers>
-        </AuthProvider>
+        <ThemeProvider defaultTheme="system" enableSystem attribute='class'>
+          <AuthProvider>
+            <Providers>
+              <SocketProvider>
+                {children}
+              </SocketProvider>
+            </Providers>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

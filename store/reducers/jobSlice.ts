@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '@/lib/api';
+import { create } from 'domain';
+import { exportPages } from 'next/dist/export/worker';
 
 // Define your data types
 interface JobState {
@@ -55,11 +57,42 @@ export const rejectJob = createAsyncThunk(
 export const deleteJob = createAsyncThunk(
   'jobs/deleteJob',
   async (job: any) => {
-    console.log('deletedJob');
     const response = await api.post('/api/jobs/delete', job);
     return response.data;
   }
 );
+
+export const pinJob = createAsyncThunk(
+  'jobs/pinJob',
+  async (job: any) => {
+    const response = await api.post('/api/jobs/pin', job);
+    return response.data;
+  }
+)
+export const unPinJob = createAsyncThunk(
+  'jobs/unPinJob',
+  async (job: any) => {
+    const response = await api.post('/api/jobs/unPin', job);
+    return response.data;
+  }
+)
+
+export const upRankJob = createAsyncThunk(
+  'jobs/upRankJob',
+  async (job: any) => {
+    const response = await api.post('/api/jobs/upRank', job);
+    return response.data;
+  }
+)
+
+export const downRankJob = createAsyncThunk(
+  'jobs/downRankJob',
+  async (job: any) => {
+    const response = await api.post('/api/jobs/downRank', job);
+    return response.data;
+  }
+)
+
 const jobSlice = createSlice({
   name: 'jobs',
   initialState,
@@ -141,10 +174,84 @@ const jobSlice = createSlice({
       .addCase(deleteJob.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Something went wrong';
-      });
+      }).addCase(pinJob.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(pinJob.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedJobs = action.payload.data; // Assuming the server returns the updated jobs
+        state.items = state.items.map(item =>
+          updatedJobs.find((updated: any) => updated._id === item._id) || item
+        );
+        state.items = sortJobs(state.items); // Re-sort the list
+        state.error = null;
+      })
+      .addCase(pinJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(unPinJob.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(unPinJob.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedJobs = action.payload.data; // Assuming the server returns the updated jobs
+        state.items = state.items.map(item =>
+          updatedJobs.find((updated: any) => updated._id === item._id) || item
+        );
+        state.items = sortJobs(state.items); // Re-sort the list
+        state.error = null;
+      })
+      .addCase(unPinJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(upRankJob.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(upRankJob.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedJobs = action.payload.data; // Assuming the server returns the updated jobs
+        state.items = state.items.map(item =>
+          updatedJobs.find((updated: any) => updated._id === item._id) || item
+        );
+        state.items = sortJobs(state.items); // Re-sort the list
+        state.error = null;
+      })
+      .addCase(upRankJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(downRankJob.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(downRankJob.fulfilled, (state, action) => {
+        state.loading = false;
+        const updatedJobs = action.payload.data; // Assuming the server returns the updated jobs
+        state.items = state.items.map(item =>
+          updatedJobs.find((updated: any) => updated._id === item._id) || item
+        );
+        state.items = sortJobs(state.items); // Re-sort the list
+        state.error = null;
+      })
+      .addCase(downRankJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      ;
   },
 });
 
-
+const sortJobs = (jobs: any[]) => {
+  return jobs.sort((a, b) => {
+    if (a.isFeatured !== b.isFeatured) {
+      return b.isFeatured - a.isFeatured; // Featured jobs first
+    }
+    if (a.isFeatured) {
+      return a.featureRank - b.featureRank; // Sort featured jobs by featureRank
+    }
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); // Sort remaining jobs by createdAt
+  });
+};
 
 export default jobSlice.reducer;

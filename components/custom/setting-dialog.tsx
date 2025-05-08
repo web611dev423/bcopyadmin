@@ -19,7 +19,9 @@ const SettingDialog = ({ open, onOpenChange }: any) => {
     if (dashboardString)
       setCode(dashboardString.dashString);
   }, [dashboardString]);
-
+  useEffect(() => {
+    if (open) setCode(dashboardString.dashString);
+  }, [open])
   const handleSave = async () => {
     if (code.length > 0)
       await dispatch(updateDashboardString({ dashboardString: code }));
@@ -39,7 +41,7 @@ const SettingDialog = ({ open, onOpenChange }: any) => {
         </DialogHeader>
         <div className="grid grid-cols-2 grid-rows-2 gap-4 w-[500px] h-[400px] max-w-[500px] max-h-[400px]">
           <textarea
-            className="col-span-1 row-span-1 w-full h-full border resize-none overflow-hidden p-2 rounded-[15px]"
+            className="col-span-1 row-span-1 w-full h-full border resize-none overflow-hidden p-4 rounded-[15px] text-sm"
             value={code}
             onChange={(e) => setCode(e.target.value)}
           />

@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Check, X, ArrowUpDown, User, Clock, FileText, Delete, Trash2 } from 'lucide-react';
+import { Check, X, ArrowUpDown, User, Clock, FileText, Delete, Trash2, PinOff, Pin } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -20,7 +20,7 @@ import {
 import { useEffect, useState } from 'react';
 
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { fetchContributions, accpetContribution, rejectContribution, deleteContribution, fetchStatus } from '@/store/reducers/contributionSlice';
+import { fetchContributions, accpetContribution, rejectContribution, deleteContribution, fetchStatus, pinContribution, unPinContribution } from '@/store/reducers/contributionSlice';
 
 export function Contributions(props: any) {
   const [sortField, setSortField] = useState<string>('date');
@@ -67,6 +67,12 @@ export function Contributions(props: any) {
   const handleDelete = async (id: string) => {
     await dispatch(deleteContribution({ id }));
   }
+  const handlePin = async (id: string) => {
+    await dispatch(pinContribution({ id }));
+  }
+  const handleUnPin = async (id: string) => {
+    await dispatch(unPinContribution({ id }));
+  }
   return (
     <div className="space-y-6">
       <Table>
@@ -85,6 +91,7 @@ export function Contributions(props: any) {
               <SortButton field="title">Review Code</SortButton>
             </TableHead>
             <TableHead className='text-center  border-gray-200'>Status</TableHead>
+            <TableHead className='text-center  border-gray-200'>Pin Rank</TableHead>
             <TableHead className="text-center  border-gray-200">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -148,6 +155,12 @@ export function Contributions(props: any) {
                   {item.status}
                 </Badge>
               </TableCell >
+              <TableCell className="text-right flex items-center space-x-2">
+                <p className="text-sm">{item.featureRank ? item.featureRank : ""}</p>
+                <Button variant="ghost" size="icon" className={item.isFeatured ? "text-blue" : "text-red"} onClick={() => { !item.isFeatured ? handlePin(item._id) : handleUnPin(item._id) }}>
+                  {item.isFeatured ? <PinOff className="h-4 w-4" fill='red' /> : <Pin className="h-4 w-4" fill='blue' />}
+                </Button>
+              </TableCell>
               <TableCell className="text-right space-x-2">
                 {item.status === 'pending' && (
                   <>

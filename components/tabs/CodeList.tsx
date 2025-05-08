@@ -16,14 +16,12 @@ import {
   FileUp,
   Search,
   ArrowUpDown,
-  User,
   Copy,
-  Star,
-  Lamp,
   Lightbulb,
   Flag,
-  Code,
-  FileText
+  FileText,
+  PinOff,
+  Pin
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
@@ -35,7 +33,7 @@ import {
 } from '@/components/ui/tooltip';
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { fetchPrograms, acceptProgram, rejectProgram, fetchStatus, } from '@/store/reducers/programSlice';
+import { fetchPrograms, acceptProgram, rejectProgram, fetchStatus, unPinProgram, pinProgram, } from '@/store/reducers/programSlice';
 import { fetchCategories } from '@/store/reducers/categorySlice';
 import ftpapi from '@/lib/ftpapi';
 
@@ -93,19 +91,24 @@ export function CodeList(props: any) {
     }
     const file = event.target.files[0];
     const formData = new FormData();
-    console.log(file);
+
     formData.append('file', file);
-    console.log(formData)
+
     try {
       const response = await ftpapi.post('/api/upload/code', formData);
-      console.log(response);
+
       dispatch(fetchPrograms());
 
     } catch (error) {
       console.error('Error uploading file:', error);
     }
   };
-
+  const handlePin = async (id: string) => {
+    await dispatch(pinProgram({ id }));
+  }
+  const handleUnPin = async (id: string) => {
+    await dispatch(unPinProgram({ id }));
+  }
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -163,6 +166,9 @@ export function CodeList(props: any) {
             </TableHead>
             <TableHead className='text-center  border-gray-200'>
               Review Code
+            </TableHead>
+            <TableHead className='text-center  border-gray-200'>
+              Pin Rank
             </TableHead>
             <TableHead className="text-center  border-gray-200">Actions</TableHead>
           </TableRow>
@@ -247,6 +253,12 @@ export function CodeList(props: any) {
                   </Button>
                 </div>
               </TableCell>
+              <TableCell className="text-right flex items-center space-x-2">
+                <p className="text-sm">{program.featureRank ? program.featureRank : ""}</p>
+                <Button variant="ghost" size="icon" className={program.isFeatured ? "text-blue" : "text-red"} onClick={() => { !program.isFeatured ? handlePin(program._id) : handleUnPin(program._id) }}>
+                  {program.isFeatured ? <PinOff className="h-4 w-4" fill='red' /> : <Pin className="h-4 w-4" fill='blue' />}
+                </Button>
+              </TableCell>
               <TableCell className='justify-items-center  border-gray-200'>
                 <div className='flex items-center space-x-2'>
                   <Button variant="ghost" size="icon" disabled={program.isActive} onClick={() => handleAccept(program._id)}>
@@ -261,7 +273,6 @@ export function CodeList(props: any) {
           ))}
         </TableBody>
       </Table>
-
     </div>
   );
 }

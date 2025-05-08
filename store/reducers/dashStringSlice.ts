@@ -60,7 +60,6 @@ const dashStringSlice = createSlice({
       })
       .addCase(updateDashboardString.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload.data);
         state.dashboardString = action.payload.data;
       })
       .addCase(updateDashboardString.rejected, (state, action) => {
